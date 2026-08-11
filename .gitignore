@@ -1,0 +1,91 @@
+# Build outputs
+target/
+out/
+build/
+dist/
+
+# Java and Maven
+*.class
+*.jar
+*.war
+*.ear
+.mvn/timing.properties
+
+# Frontend dependencies and build cache
+node_modules/
+clipforge-frontend/node_modules/
+clipforge-frontend/dist/
+clipforge-frontend/.vite/
+clipforge-frontend/.turbo/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.yaml
+application-secret.yml
+application-secret.yaml
+src/main/resources/application-local.yml
+src/main/resources/application-local.yaml
+src/main/resources/application-secret.yml
+src/main/resources/application-secret.yaml
+
+# Logs and runtime files
+*.log
+logs/
+run/
+tmp/
+temp/
+uploads/
+storage/
+
+# Development documents and local agent notes
+docs/
+AGENTS.md
+.agents/
+.codex/
+feature-progress.json
+
+# Test sources and test fixtures
+src/test/
+clipforge-frontend/src/**/__tests__/
+clipforge-frontend/src/**/*.spec.*
+clipforge-frontend/src/**/*.test.*
+data/
+clipforge-frontend/public/demo/
+
+# Local duplicate resources and reference files
+resources/
+
+# Large media and generated artifacts
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wav
+*.mp3
+*.aac
+*.flac
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
+*.pdf
+*.doc
+*.docx
+*.xlsx
+*.pptx
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
