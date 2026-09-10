@@ -42,6 +42,7 @@ public class ModelRoutingExecutor {
             long startedAt = System.currentTimeMillis();
             try {
                 recordTrace(request, "MODEL_ROUTE_ATTEMPT_STARTED", "模型路由开始尝试候选", detail(candidate, null));
+//              真正调用模型
                 T value = candidate.getSupplier().get();
                 long latencyMs = System.currentTimeMillis() - startedAt;
                 healthStore.markSuccess(request.getCapability(), candidate);
