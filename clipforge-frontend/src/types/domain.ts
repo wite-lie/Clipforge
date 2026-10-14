@@ -1,4 +1,4 @@
-import type { CreationEvaluationResultView, CreationPlanResult, CreationPlanVersionView, CreationRevisionResultView, ModelCallRecordView, TraceEvent } from './api'
+import type { CreationEvaluationResultView, CreationOutputType, CreationOutputView, CreationPlanResult, CreationPlanVersionView, CreationRevisionResultView, ModelCallRecordView, TraceEvent } from './api'
 
 export interface ProjectResponse {
   projectId?: string
@@ -298,7 +298,9 @@ export interface QueryPlanResponse {
   runId?: string
   taskId?: string
   resultId?: string
+  outputType?: CreationOutputType
   result?: CreationPlanResult
+  output?: CreationOutputView
 }
 
 export interface QueryQualityReportResponse {

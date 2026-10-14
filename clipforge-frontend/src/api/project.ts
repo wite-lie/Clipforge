@@ -1,6 +1,7 @@
 import { request } from './http'
 import type { ConversationMessageResponse, ConversationResponse, ProjectResponse } from '@/types/domain'
 import type { CreatePlanSubmitResponse } from './creation'
+import type { CreationOutputType } from '@/types/api'
 
 export interface CreateProjectRequest {
   userId?: string
@@ -11,6 +12,10 @@ export interface CreateProjectRequest {
 export interface CreateConversationRequest {
   userId?: string
   title?: string
+}
+
+export interface UpdateConversationRequest {
+  title: string
 }
 
 export interface QueryConversationMessagesResponse {
@@ -26,6 +31,7 @@ export interface ConversationRouteRequest {
   message: string
   platform?: string
   stylePreference?: string
+  outputType?: CreationOutputType
   materialIds?: string[]
   processTaskIds?: string[]
   knowledgeBaseIds?: string[]
@@ -95,6 +101,14 @@ export function deleteConversation(conversationId: string) {
   return request<void>({
     method: 'DELETE',
     url: `/api/conversations/${encodeURIComponent(conversationId)}`
+  })
+}
+
+export function updateConversation(conversationId: string, payload: UpdateConversationRequest) {
+  return request<ConversationResponse>({
+    method: 'PATCH',
+    url: `/api/conversations/${encodeURIComponent(conversationId)}`,
+    data: payload
   })
 }
 

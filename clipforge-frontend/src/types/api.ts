@@ -74,6 +74,78 @@ export interface CreationPlanResult {
   knowledgeSummaryText?: string
 }
 
+export type CreationOutputType = 'VIDEO_PLAN' | 'ARTICLE_PLAN'
+
+export interface ArticleSourceEvidence {
+  sourceType?: string
+  sourceId?: string
+  quote?: string
+}
+
+export interface ArticleImageSlot {
+  slotId?: string
+  sectionTitle?: string
+  placement?: string
+  sourceType?: string
+  recommendedMaterialIds?: string[]
+  boundMaterialId?: string
+  imagePrompt?: string
+  reason?: string
+  status?: string
+}
+
+export interface ArticleSection {
+  sectionTitle?: string
+  body?: string
+  keyPoints?: string[]
+  suggestedMaterialIds?: string[]
+  imageSlots?: ArticleImageSlot[]
+  sourceEvidence?: ArticleSourceEvidence[]
+}
+
+export interface ArticleCreationPlan {
+  theme?: string
+  targetAudience?: string
+  titleCandidates?: string[]
+  summary?: string
+  lead?: string
+  sections?: ArticleSection[]
+  imageSlots?: ArticleImageSlot[]
+  conclusion?: string
+  interactionPrompt?: string
+  publishCopy?: string
+  hashtags?: string[]
+  sourceEvidence?: ArticleSourceEvidence[]
+  riskWarnings?: string[]
+  score?: number
+  improvementSuggestions?: string[]
+}
+
+export interface CreationOutputView {
+  outputId?: string
+  runId?: string
+  taskId?: string
+  outputType?: CreationOutputType
+  schemaVersion?: string
+  payloadJson?: string
+  createTime?: string
+}
+
+export interface CreationMarkdownExportResponse {
+  exportId?: string
+  runId?: string
+  outputId?: string
+  outputType?: CreationOutputType
+  exportFormat?: string
+  fileName?: string
+  filePath?: string
+  contentType?: string
+  sizeBytes?: number
+  status?: string
+  errorMessage?: string
+  createTime?: string
+}
+
 export interface TaskStatusResponse {
   taskId?: string
   taskType?: string

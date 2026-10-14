@@ -1,5 +1,5 @@
 import { request } from './http'
-import type { CreationPlanResult, ModelCallRecordView, TraceEvent } from '@/types/api'
+import type { CreationMarkdownExportResponse, CreationOutputType, CreationOutputView, CreationPlanResult, ModelCallRecordView, TraceEvent } from '@/types/api'
 import type { QueryPlanResponse, QueryQualityReportResponse } from '@/types/domain'
 
 export interface CreatePlanSubmitRequest {
@@ -9,6 +9,7 @@ export interface CreatePlanSubmitRequest {
   goal: string
   platform: string
   stylePreference?: string
+  outputType?: CreationOutputType
   materialIds?: string[]
   knowledgeBaseIds?: string[]
 }
@@ -18,7 +19,9 @@ export interface CreatePlanSubmitResponse {
   projectId?: string
   conversationId?: string
   planId?: string
+  outputType?: CreationOutputType
   result?: CreationPlanResult
+  output?: CreationOutputView
   traceEvents?: TraceEvent[]
 }
 
@@ -35,6 +38,19 @@ export function queryPlan(runId: string) {
     method: 'GET',
     url: `/api/creation/plans/${encodeURIComponent(runId)}`
   })
+}
+
+export function exportMarkdown(runId: string, forceRegenerate = false) {
+  return request<CreationMarkdownExportResponse>({
+    method: 'POST',
+    url: `/api/creation/runs/${encodeURIComponent(runId)}/exports/markdown`,
+    data: { forceRegenerate }
+  })
+}
+
+export function downloadMarkdownUrl(exportId: string) {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || ''
+  return `${baseUrl}/api/creation/exports/${encodeURIComponent(exportId)}/download`
 }
 
 export function queryQualityReport(runId: string) {

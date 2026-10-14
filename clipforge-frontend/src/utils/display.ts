@@ -3,7 +3,9 @@ export const PLATFORM_OPTIONS = [
   { label: '视频通用', value: 'video' },
   { label: '微信视频号', value: 'wechat' },
   { label: '小红书', value: 'xiaohongshu' },
-  { label: 'B站', value: 'bilibili' }
+  { label: 'B站', value: 'bilibili' },
+  { label: '今日头条', value: 'toutiao' },
+  { label: '百家号', value: 'baijiahao' }
 ]
 
 export function platformLabel(value?: string) {

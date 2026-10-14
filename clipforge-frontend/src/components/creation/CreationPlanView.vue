@@ -1,5 +1,6 @@
 <template>
-  <el-empty v-if="!plan" description="暂无创作方案" />
+  <ArticleCreationPlanView v-if="isArticlePlan" :article="articlePlan" />
+  <el-empty v-else-if="!plan" description="暂无创作方案" />
   <div v-else class="plan-view">
     <InfoSummary :rows="summaryRows" />
 
@@ -57,12 +58,28 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import ArticleCreationPlanView from '@/components/creation/ArticleCreationPlanView.vue'
 import InfoSummary from '@/components/common/InfoSummary.vue'
-import type { CreationPlanResult } from '@/types/api'
+import type { ArticleCreationPlan, CreationOutputType, CreationOutputView, CreationPlanResult } from '@/types/api'
 
 const props = defineProps<{
   plan?: CreationPlanResult
+  outputType?: CreationOutputType
+  output?: CreationOutputView
 }>()
+
+const isArticlePlan = computed(() => (props.outputType || props.output?.outputType) === 'ARTICLE_PLAN')
+
+const articlePlan = computed<ArticleCreationPlan | undefined>(() => {
+  if (!isArticlePlan.value || !props.output?.payloadJson) {
+    return undefined
+  }
+  try {
+    return JSON.parse(props.output.payloadJson) as ArticleCreationPlan
+  } catch {
+    return undefined
+  }
+})
 
 const summaryRows = computed(() => [
   { label: '主题', value: props.plan?.theme },
@@ -80,20 +97,20 @@ const summaryRows = computed(() => [
 .plan-block {
   padding: 14px;
   border-radius: 8px;
-  background: rgba(8, 15, 28, 0.68);
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: #fbfdfb;
+  border: 1px solid var(--cf-border);
 }
 
 .plan-title {
   margin-bottom: 8px;
-  color: #f6f9ff;
+  color: var(--cf-ink);
   font-weight: 750;
 }
 
 .plan-block p,
 .plan-block ol {
   margin: 0;
-  color: #dbeafe;
+  color: var(--cf-text);
   line-height: 1.85;
 }
 
@@ -114,8 +131,8 @@ const summaryRows = computed(() => [
 .tag-list span {
   padding: 5px 9px;
   border-radius: 999px;
-  color: #c7fff0;
-  background: rgba(105, 224, 179, 0.12);
-  border: 1px solid rgba(105, 224, 179, 0.24);
+  color: var(--cf-green-deep);
+  background: var(--cf-green-pale);
+  border: 1px solid #cfe4d5;
 }
 </style>

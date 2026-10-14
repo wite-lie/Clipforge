@@ -17,6 +17,7 @@ clipforge-frontend/node_modules/
 clipforge-frontend/dist/
 clipforge-frontend/.vite/
 clipforge-frontend/.turbo/
+*.tsbuildinfo
 
 # IDE and editor files
 .idea/
@@ -53,6 +54,10 @@ AGENTS.md
 .agents/
 .codex/
 feature-progress.json
+
+# Local internship and interview materials
+实习/
+面试/
 
 # Test sources and test fixtures
 src/test/

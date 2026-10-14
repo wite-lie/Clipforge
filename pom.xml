@@ -1,289 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Maven（项目构建工具）的项目描述文件，负责声明项目坐标、依赖和构建插件。 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <!-- Maven（项目构建工具）模型版本，固定使用 4.0.0。 -->
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot（Spring Boot 框架）父工程，统一管理常用依赖版本。 -->
     <parent>
-        <!-- Spring Boot（Spring Boot 框架）官方依赖管理的 groupId（组织编号）。 -->
         <groupId>org.springframework.boot</groupId>
-        <!-- Spring Boot（Spring Boot 框架）官方父 POM（项目对象模型）。 -->
         <artifactId>spring-boot-starter-parent</artifactId>
-        <!-- 当前项目使用的 Spring Boot（Spring Boot 框架）版本。 -->
         <version>3.5.7</version>
-        <!-- relativePath（相对路径）置空，表示直接从 Maven 仓库解析父工程。 -->
         <relativePath/>
     </parent>
 
-    <!-- 项目所属组织编号。 -->
     <groupId>com.clipforge</groupId>
-    <!-- 项目构件编号。 -->
-    <artifactId>clipforge-agent</artifactId>
-    <!-- 项目当前版本，SNAPSHOT（快照）表示开发中的不稳定版本。 -->
+    <artifactId>clipforge-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <!-- 项目名称。 -->
-    <name>ClipForge Agent（创作规划智能体）</name>
-    <!-- 项目描述。 -->
-    <description>面向图文和短视频素材的多模态创作规划 Agent（智能体）后端项目。</description>
+    <packaging>pom</packaging>
 
-    <!-- properties（属性）用于集中管理构建参数和第三方依赖版本。 -->
+    <name>ClipForge Agent Multi-Module Parent</name>
+    <description>ClipForge Agent（创作规划智能体）多模块父工程。</description>
+
+    <modules>
+        <module>clipforge-dependencies</module>
+        <module>clipforge-common</module>
+        <module>clipforge-contract</module>
+        <module>clipforge-ai-api</module>
+        <module>clipforge-ai-infrastructure</module>
+        <module>clipforge-observability</module>
+        <module>clipforge-messaging</module>
+        <module>clipforge-module-knowledge</module>
+        <module>clipforge-module-material</module>
+        <module>clipforge-module-memory</module>
+        <module>clipforge-module-creation</module>
+        <module>clipforge-server</module>
+    </modules>
+
     <properties>
-        <!-- Java（爪哇语言）版本，项目目标使用 Java 21（爪哇 21）。 -->
         <java.version>21</java.version>
-        <!-- project.build.sourceEncoding（项目源码编码）固定为 UTF-8（统一字符编码），避免中文源码和注释在不同环境下乱码。 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- project.reporting.outputEncoding（项目报告输出编码）固定为 UTF-8（统一字符编码），避免测试报告或插件输出中文乱码。 -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- LangChain4j（LangChain 的 Java 封装）版本，后续模型接入阶段使用。 -->
         <langchain4j.version>1.15.1</langchain4j.version>
-        <!-- Mockito（模拟测试工具）版本，用于测试阶段创建模拟对象。 -->
         <mockito.version>5.20.0</mockito.version>
-        <!-- ArchUnit（架构测试工具）版本，用于守护包依赖边界。 -->
         <archunit.version>1.4.1</archunit.version>
-        <!-- MyBatis-Plus（MyBatis 增强工具）版本，用于 Phase 2（阶段 2）的数据库持久化。 -->
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
-        <!-- RocketMQ（消息队列）Spring Boot Starter（启动器）版本，用于 Phase 7.8（阶段 7.8）异步文档处理。 -->
         <rocketmq-spring.version>2.3.6</rocketmq-spring.version>
-        <!-- Apache Tika（通用文档解析工具）版本，用于 Phase 7.12（阶段 7.12）解析 PDF（便携式文档格式）和 Word（文字处理文档）。 -->
         <tika.version>3.2.3</tika.version>
     </properties>
 
-    <!-- dependencies（依赖）声明项目编译、运行、测试所需的库。 -->
-    <dependencies>
-        <!-- Spring Web（Spring 网络模块），用于提供 REST API（表述性状态转移接口）。 -->
-        <dependency>
-            <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-            <groupId>org.springframework.boot</groupId>
-            <!-- Web（网络接口）启动器，包含 Spring MVC（Spring Web 模型视图控制器）等能力。 -->
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- Spring Validation（Spring 参数校验），用于校验接口请求参数。 -->
-        <dependency>
-            <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-            <groupId>org.springframework.boot</groupId>
-            <!-- Validation（参数校验）启动器，提供 Jakarta Validation（雅加达校验）能力。 -->
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <!-- Spring Actuator（Spring 应用观测），用于暴露健康检查和运行状态。 -->
-        <dependency>
-            <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-            <groupId>org.springframework.boot</groupId>
-            <!-- Actuator（应用观测）启动器，提供 health（健康检查）等端点。 -->
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <!-- Spring Data Redis（Spring Redis 数据访问），用于 Phase 7.8（阶段 7.8）缓存 RAG（检索增强生成）文档处理状态。 -->
-        <dependency>
-            <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-            <groupId>org.springframework.boot</groupId>
-            <!-- Data Redis（Redis 数据访问）启动器，默认使用 Lettuce（Redis 客户端）。 -->
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <!-- Spring JDBC（Spring 数据库访问基础模块），用于提供 DataSource（数据源）和事务基础能力。 -->
-        <dependency>
-            <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-            <groupId>org.springframework.boot</groupId>
-            <!-- JDBC（Java 数据库连接）启动器。 -->
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-
-        <!-- PostgreSQL Driver（PostgreSQL 驱动），用于连接 PostgreSQL（关系数据库）。 -->
-        <dependency>
-            <!-- PostgreSQL（关系数据库）官方 JDBC（Java 数据库连接）驱动组织编号。 -->
-            <groupId>org.postgresql</groupId>
-            <!-- PostgreSQL JDBC（Java 数据库连接）驱动构件。 -->
-            <artifactId>postgresql</artifactId>
-        </dependency>
-
-        <!-- MyBatis-Plus（MyBatis 增强工具）Spring Boot 3 启动器，用于简化 CRUD（增删改查）持久化代码。 -->
-        <dependency>
-            <!-- MyBatis-Plus（MyBatis 增强工具）组织编号。 -->
-            <groupId>com.baomidou</groupId>
-            <!-- MyBatis-Plus（MyBatis 增强工具）适配 Spring Boot 3 的启动器。 -->
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <!-- 使用项目属性统一管理版本。 -->
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-
-        <!-- RocketMQ（消息队列）Spring Boot Starter（启动器），用于异步发送和消费知识文档处理任务。 -->
-        <dependency>
-            <!-- Apache RocketMQ（消息队列）Spring 集成组件的组织编号。 -->
-            <groupId>org.apache.rocketmq</groupId>
-            <!-- RocketMQ Spring Boot Starter（启动器）提供 RocketMQTemplate（消息模板）和 Listener（监听器）。 -->
-            <artifactId>rocketmq-spring-boot-starter</artifactId>
-            <!-- 使用项目属性统一管理版本。 -->
-            <version>${rocketmq-spring.version}</version>
-        </dependency>
-
-        <!-- Flyway Core（数据库迁移工具核心），用于按版本管理数据库表结构。 -->
-        <dependency>
-            <!-- Flyway（数据库迁移工具）组织编号。 -->
-            <groupId>org.flywaydb</groupId>
-            <!-- Flyway（数据库迁移工具）核心构件。 -->
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
-        <!-- Flyway PostgreSQL（Flyway 的 PostgreSQL 支持），用于兼容较新版本 Flyway 的数据库适配拆分。 -->
-        <dependency>
-            <!-- Flyway（数据库迁移工具）组织编号。 -->
-            <groupId>org.flywaydb</groupId>
-            <!-- Flyway（数据库迁移工具）的 PostgreSQL（关系数据库）适配构件。 -->
-            <artifactId>flyway-database-postgresql</artifactId>
-        </dependency>
-
-        <!-- LangChain4j（LangChain 的 Java 封装）核心依赖，后续用于模型、工具和 RAG（检索增强生成）能力。 -->
-        <dependency>
-            <!-- LangChain4j（LangChain 的 Java 封装）的组织编号。 -->
-            <groupId>dev.langchain4j</groupId>
-            <!-- LangChain4j（LangChain 的 Java 封装）核心构件。 -->
-            <artifactId>langchain4j</artifactId>
-            <!-- 使用属性集中管理版本，便于后续统一升级。 -->
-            <version>${langchain4j.version}</version>
-        </dependency>
-
-        <!-- LangChain4j OpenAI（OpenAI 兼容接口集成），用于通过 LangChain4j（LangChain 的 Java 封装）调用 OpenAI-Compatible API（OpenAI 兼容接口）模型。 -->
-        <dependency>
-            <!-- LangChain4j（LangChain 的 Java 封装）的组织编号。 -->
-            <groupId>dev.langchain4j</groupId>
-            <!-- OpenAI（OpenAI 兼容接口）集成构件。 -->
-            <artifactId>langchain4j-open-ai</artifactId>
-            <!-- 使用属性集中管理版本，保持和 langchain4j 核心版本一致。 -->
-            <version>${langchain4j.version}</version>
-        </dependency>
-
-        <!-- Apache Tika Parser（通用文档解析器），用于把 PDF（便携式文档格式）、Word（文字处理文档）等办公文档抽取为文本。 -->
-        <dependency>
-            <!-- Apache Tika（通用文档解析工具）组织编号。 -->
-            <groupId>org.apache.tika</groupId>
-            <!-- Standard Package（标准解析器包）包含 PDF、Office 等常见文档解析能力。 -->
-            <artifactId>tika-parsers-standard-package</artifactId>
-            <!-- 使用项目属性统一管理版本。 -->
-            <version>${tika.version}</version>
-        </dependency>
-
-        <!-- Apache Tika Core（通用文档解析核心包），显式引入基础解析 API，避免 IDE（集成开发环境）对传递依赖解析不稳定。 -->
-        <dependency>
-            <!-- Apache Tika（通用文档解析工具）组织编号。 -->
-            <groupId>org.apache.tika</groupId>
-            <!-- Core（核心包）包含 Metadata、Parser、SAX（简单 API for XML）等基础类。 -->
-            <artifactId>tika-core</artifactId>
-            <!-- 使用项目属性统一管理版本。 -->
-            <version>${tika.version}</version>
-        </dependency>
-
-        <!-- Lombok（代码简化工具），后续用于减少 getter/setter（取值/赋值方法）等样板代码。 -->
-        <dependency>
-            <!-- Lombok（代码简化工具）的组织编号。 -->
-            <groupId>org.projectlombok</groupId>
-            <!-- Lombok（代码简化工具）构件。 -->
-            <artifactId>lombok</artifactId>
-            <!-- optional（可选）表示该依赖不向下传递。 -->
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Spring Boot Test（Spring Boot 测试框架），用于单元测试和接口测试。 -->
-        <dependency>
-            <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-            <groupId>org.springframework.boot</groupId>
-            <!-- Test（测试）启动器，包含 JUnit（单元测试框架）、AssertJ（断言工具）等。 -->
-            <artifactId>spring-boot-starter-test</artifactId>
-            <!-- scope（作用域）为 test（测试），表示只在测试阶段使用。 -->
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Mockito Core（Mockito 核心库），显式声明版本，方便测试插件以 Java Agent（Java 代理）方式加载。 -->
-        <dependency>
-            <!-- Mockito（模拟测试工具）的组织编号。 -->
-            <groupId>org.mockito</groupId>
-            <!-- Mockito（模拟测试工具）核心构件。 -->
-            <artifactId>mockito-core</artifactId>
-            <!-- 使用项目属性统一管理 Mockito（模拟测试工具）版本。 -->
-            <version>${mockito.version}</version>
-            <!-- scope（作用域）为 test（测试），表示只在测试阶段使用。 -->
-            <scope>test</scope>
-        </dependency>
-
-        <!-- ArchUnit JUnit 5（架构测试工具），用于验证包依赖方向和分层边界。 -->
-        <dependency>
-            <!-- ArchUnit（架构测试工具）的组织编号。 -->
-            <groupId>com.tngtech.archunit</groupId>
-            <!-- JUnit 5（单元测试框架 5）集成构件。 -->
-            <artifactId>archunit-junit5</artifactId>
-            <!-- 使用项目属性统一管理版本。 -->
-            <version>${archunit.version}</version>
-            <!-- scope（作用域）为 test（测试），表示只在测试阶段使用。 -->
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <!-- build（构建）声明 Maven（项目构建工具）的构建插件。 -->
     <build>
-        <!-- plugins（插件）声明构建过程中要使用的插件。 -->
-        <plugins>
-            <!-- Maven Compiler Plugin（Maven 编译插件），用于编译 Java（爪哇语言）源码。 -->
-            <plugin>
-                <!-- Maven（项目构建工具）官方插件组织编号。 -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <!-- Compiler（编译器）插件构件。 -->
-                <artifactId>maven-compiler-plugin</artifactId>
-                <!-- configuration（配置）用于明确编译参数。 -->
-                <configuration>
-                    <!-- encoding（编码）固定为 UTF-8（统一字符编码），避免中文字符串字面量在编译阶段乱码。 -->
-                    <encoding>UTF-8</encoding>
-                    <!-- parameters（参数名保留）便于后续框架反射读取方法参数名。 -->
-                    <parameters>true</parameters>
-                </configuration>
-            </plugin>
-
-            <!-- Spring Boot Maven Plugin（Spring Boot Maven 插件），用于打包可运行应用。 -->
-            <plugin>
-                <!-- Spring Boot（Spring Boot 框架）官方组织编号。 -->
-                <groupId>org.springframework.boot</groupId>
-                <!-- Spring Boot Maven Plugin（Spring Boot Maven 插件）构件。 -->
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- configuration（配置）用于定制插件行为。 -->
-                <configuration>
-                    <!-- excludes（排除项）避免把 Lombok（代码简化工具）打入最终运行包。 -->
-                    <excludes>
-                        <!-- exclude（排除）声明一个要排除的依赖。 -->
-                        <exclude>
-                            <!-- Lombok（代码简化工具）的组织编号。 -->
-                            <groupId>org.projectlombok</groupId>
-                            <!-- Lombok（代码简化工具）构件。 -->
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-            <!-- Maven Surefire Plugin（Maven 单元测试插件），用于运行 JUnit（单元测试框架）测试。 -->
-            <plugin>
-                <!-- Maven（项目构建工具）官方插件组织编号。 -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <!-- Surefire（单元测试执行器）插件构件。 -->
-                <artifactId>maven-surefire-plugin</artifactId>
-                <!-- configuration（配置）用于定制测试 JVM（Java 虚拟机）启动参数。 -->
-                <configuration>
-                    <!-- argLine（启动参数）用于定制测试 JVM（Java 虚拟机）；这里同时固定中文输出编码，并加载 Mockito（模拟测试工具）的 Java Agent（Java 代理）。 -->
-                    <argLine>-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar</argLine>
-                    <!-- systemPropertyVariables（系统属性变量）会传入测试 JVM（Java 虚拟机），用于再次确认测试进程使用 UTF-8（统一字符编码）。 -->
-                    <systemPropertyVariables>
-                        <!-- file.encoding（文件编码）控制 Java（爪哇语言）默认字符集。 -->
-                        <file.encoding>UTF-8</file.encoding>
-                        <!-- sun.stdout.encoding（标准输出编码）控制 System.out（标准输出）的字符编码。 -->
-                        <sun.stdout.encoding>UTF-8</sun.stdout.encoding>
-                        <!-- sun.stderr.encoding（错误输出编码）控制 System.err（错误输出）的字符编码。 -->
-                        <sun.stderr.encoding>UTF-8</sun.stderr.encoding>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <parameters>true</parameters>
+                        <release>${java.version}</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <file.encoding>UTF-8</file.encoding>
+                            <sun.stdout.encoding>UTF-8</sun.stdout.encoding>
+                            <sun.stderr.encoding>UTF-8</sun.stderr.encoding>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

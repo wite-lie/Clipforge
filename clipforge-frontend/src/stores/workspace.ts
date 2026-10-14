@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { DEMO } from '@/utils/demo'
 import type { ConversationResponse, KnowledgeBaseResponse, MaterialResponse, ProjectResponse } from '@/types/domain'
 import type {
+  CreationOutputType,
+  CreationOutputView,
   CreationPlanResult,
   ModelCallRecordView,
   TaskStatusResponse,
@@ -32,7 +34,9 @@ interface WorkspaceState {
   selectedMaterialIds: string[]
   currentRunId?: string
   runIds: string[]
+  currentOutputType?: CreationOutputType
   currentPlan?: CreationPlanResult
+  currentOutput?: CreationOutputView
   traceEvents: TraceEvent[]
   modelCallRecords: ModelCallRecordView[]
   qualityReport?: QueryQualityReportResponse
@@ -132,6 +136,10 @@ export const useWorkspaceStore = defineStore('workspace', {
     },
     setCurrentPlan(plan?: CreationPlanResult) {
       this.currentPlan = plan
+    },
+    setCurrentOutput(output?: CreationOutputView, outputType?: CreationOutputType) {
+      this.currentOutput = output
+      this.currentOutputType = outputType || output?.outputType
     },
     setTraceEvents(events: TraceEvent[]) {
       this.traceEvents = events

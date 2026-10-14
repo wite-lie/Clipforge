@@ -1,14 +1,12 @@
 <template>
   <div class="cf-shell">
-    <TopBar />
-    <el-container class="cf-main">
-      <el-aside width="230px" class="border-r border-[rgba(148,163,184,0.18)]">
-        <SideNav />
-      </el-aside>
-      <el-main class="cf-page">
+    <SideNav />
+    <div class="cf-workspace">
+      <TopBar />
+      <main class="cf-page">
         <RouterView />
-      </el-main>
-    </el-container>
+      </main>
+    </div>
   </div>
 </template>
 

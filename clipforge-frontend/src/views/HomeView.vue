@@ -1,264 +1,70 @@
 <template>
-  <div class="cf-grid" style="gap: 20px">
-    <section class="cf-hero">
-      <div class="cf-hero-content">
-        <div class="cf-hero-copy">
-          <div class="cf-eyebrow">
-            <el-icon><TrendCharts /></el-icon>
-            虎鲸科普联调演示
-          </div>
-          <h1>从素材、知识库到创作方案，一次跑通短视频 Agent 流程</h1>
-          <p>
-            当前页面会读取后端数据库中的项目、会话、知识库、素材和最近一次创作结果。
-            如果数据库为空，可以先初始化虎鲸演示数据，再进入项目会话页面发起真实创作。
-          </p>
-
-          <div class="cf-hero-actions">
-            <el-button type="primary" size="large" :icon="UploadFilled" :loading="initializing" @click="initializeDemo">
-              初始化虎鲸演示数据
-            </el-button>
-            <el-button size="large" :icon="VideoPlay" :loading="creating" @click="createDemoPlan">
-              生成虎鲸创作方案
-            </el-button>
-            <el-button size="large" :icon="Compass" @click="$router.push('/studio')">
-              进入项目会话
-            </el-button>
-          </div>
-
-          <div class="cf-section cf-grid cf-grid-4">
-            <div class="cf-hero-stat">
-              <div class="cf-hero-stat-value">{{ store.projects.length }}</div>
-              <div class="cf-hero-stat-label">项目</div>
-            </div>
-            <div class="cf-hero-stat">
-              <div class="cf-hero-stat-value">{{ store.conversations.length }}</div>
-              <div class="cf-hero-stat-label">会话</div>
-            </div>
-            <div class="cf-hero-stat">
-              <div class="cf-hero-stat-value">{{ store.knowledgeBases.length }}</div>
-              <div class="cf-hero-stat-label">知识库</div>
-            </div>
-            <div class="cf-hero-stat">
-              <div class="cf-hero-stat-value">{{ store.materials.length }}</div>
-              <div class="cf-hero-stat-label">素材</div>
-            </div>
+  <div class="home-page">
+    <section class="welcome">
+      <div class="welcome-copy">
+        <span class="eyebrow"><el-icon><MagicStick /></el-icon> 多模态内容创作工作台</span>
+        <h1>把灵感，变成<br /><em>可以发布的内容。</em></h1>
+        <p>上传你的素材，告诉 ClipForge 你想表达什么。素材理解、知识检索和创作规划，会在同一个工作空间里自然衔接。</p>
+        <div class="welcome-actions">
+          <el-button type="primary" size="large" :icon="Plus" @click="$router.push('/studio')">开始创作</el-button>
+          <button class="text-action" @click="scrollToFeatures">了解工作方式 <el-icon><ArrowDown /></el-icon></button>
+        </div>
+        <div class="trust-line"><span class="pulse" /> 当前工作区已就绪 <b>·</b> 支持短视频方案与图文方案</div>
+      </div>
+      <div class="welcome-visual">
+        <div class="visual-frame">
+          <img src="/demo/orca/orca-real-1.png" alt="虎鲸素材预览" />
+          <div class="visual-overlay">
+            <div class="overlay-kicker">正在创作</div>
+            <strong>虎鲸为什么是海洋顶级猎手</strong>
+            <div class="overlay-meta"><span>素材理解</span><span>知识增强</span><span>结构化输出</span></div>
           </div>
         </div>
-
-        <div class="cf-hero-aside">
-          <el-card class="cf-card" shadow="never">
-            <template #header>
-              <div class="cf-panel-header compact">
-                <div>
-                  <h3 class="cf-title">当前工作区</h3>
-                  <p class="cf-subtitle">用于本次联调和演示的项目上下文</p>
-                </div>
-              </div>
-            </template>
-            <div class="cf-list">
-              <div class="cf-list-item">
-                <div class="cf-muted">项目</div>
-                <strong>{{ activeProjectName }}</strong>
-              </div>
-              <div class="cf-list-item">
-                <div class="cf-muted">会话</div>
-                <strong>{{ activeConversationName }}</strong>
-              </div>
-              <div class="cf-list-item">
-                <div class="cf-muted">平台</div>
-                <strong>{{ platformLabel(form.platform) }}</strong>
-              </div>
-              <div class="cf-list-item">
-                <div class="cf-muted">创作状态</div>
-                <strong>{{ store.currentRunId ? '已有最近一次结果' : '尚未生成' }}</strong>
-              </div>
-            </div>
-          </el-card>
-        </div>
+        <div class="floating-note note-top"><el-icon><CircleCheckFilled /></el-icon><span>已识别 4 个素材</span></div>
+        <div class="floating-note note-bottom"><span class="spark">✦</span><span>适合亲子家庭观看</span></div>
       </div>
     </section>
 
-    <section class="cf-grid cf-grid-2">
-      <SectionCard title="演示输入" desc="这些输入会发送给后端创作接口，用户编号由前端工作上下文自动携带。">
-        <div class="cf-form-inline">
-          <el-form-item label="目标平台">
-            <el-select v-model="form.platform" style="width: 100%">
-              <el-option v-for="item in PLATFORM_OPTIONS" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="知识库">
-            <el-select v-model="store.selectedKnowledgeBaseIds" multiple collapse-tags style="width: 100%" @change="store.persistSelection()">
-              <el-option
-                v-for="item in store.knowledgeBases"
-                :key="item.knowledgeBaseId"
-                :label="item.name || '未命名知识库'"
-                :value="item.knowledgeBaseId"
-              />
-            </el-select>
-          </el-form-item>
-        </div>
-
-        <el-form-item label="创作目标">
-          <el-input v-model="form.goal" type="textarea" :rows="6" />
-        </el-form-item>
-        <el-form-item label="风格偏好">
-          <el-input v-model="form.stylePreference" type="textarea" :rows="3" />
-        </el-form-item>
-
-        <el-space wrap>
-          <el-button :icon="Refresh" @click="reload">刷新后端数据</el-button>
-          <el-button type="primary" :icon="Position" :loading="creating" @click="createDemoPlan">生成创作方案</el-button>
-        </el-space>
-
-        <el-alert v-if="store.lastError" :title="store.lastError" type="error" show-icon class="mt-4" />
-      </SectionCard>
-
-      <SectionCard title="后端素材候选" desc="这里展示数据库中当前会话下已经上传的素材。">
-        <el-empty v-if="!store.materials.length" description="数据库中还没有素材，请先初始化演示数据。" />
-        <div v-else class="cf-grid cf-grid-2">
-          <el-card v-for="item in store.materials" :key="item.materialId" class="cf-card" shadow="never">
-            <div class="material-head">
-              <strong>{{ item.originalFilename || '未命名素材' }}</strong>
-              <StatusPill :status="item.processStatus || item.status" :text="statusLabel(item.processStatus || item.status)" />
-            </div>
-            <div class="cf-subtitle">{{ materialTypeLabel(item.materialType) }} · {{ item.processPhase || '等待后端处理' }}</div>
-            <el-progress :percentage="item.progressPercent ?? 0" :stroke-width="8" style="margin-top: 12px" />
-          </el-card>
-        </div>
-      </SectionCard>
+    <section ref="featuresRef" class="feature-strip">
+      <div class="section-heading">
+        <span class="eyebrow">从输入到产出</span>
+        <h2>一个工作区，承接完整创作过程</h2>
+      </div>
+      <div class="feature-grid">
+        <button class="feature-item" @click="$router.push('/materials')">
+          <div class="feature-icon green"><el-icon><Picture /></el-icon></div>
+          <div><strong>素材理解</strong><p>图片、视频和音频先被整理成可用的创作线索。</p></div>
+          <el-icon class="feature-arrow"><ArrowRight /></el-icon>
+        </button>
+        <button class="feature-item" @click="$router.push('/knowledge')">
+          <div class="feature-icon amber"><el-icon><Collection /></el-icon></div>
+          <div><strong>知识增强</strong><p>用知识库证据支撑表达，让内容更准确、更有依据。</p></div>
+          <el-icon class="feature-arrow"><ArrowRight /></el-icon>
+        </button>
+        <button class="feature-item" @click="$router.push('/studio')">
+          <div class="feature-icon blue"><el-icon><EditPen /></el-icon></div>
+          <div><strong>结构化创作</strong><p>生成可编辑、可评估、可导出的短视频或图文方案。</p></div>
+          <el-icon class="feature-arrow"><ArrowRight /></el-icon>
+        </button>
+      </div>
     </section>
 
-    <section class="cf-grid cf-grid-2">
-      <SectionCard title="最近创作方案" desc="生成后会展示后端返回的结构化方案。">
-        <el-empty v-if="!store.currentPlan" description="尚未生成创作方案。" />
-        <template v-else>
-          <CreationPlanView :plan="store.currentPlan" />
-        </template>
-      </SectionCard>
-
-      <SectionCard title="联调步骤" desc="适合空数据库重新走一遍流程。">
-        <el-timeline>
-          <el-timeline-item timestamp="第一步">点击“初始化虎鲸演示数据”，创建默认项目、会话、知识库并上传素材。</el-timeline-item>
-          <el-timeline-item timestamp="第二步">等待后端异步处理素材和知识文档，必要时到素材中心和知识库页面查看状态。</el-timeline-item>
-          <el-timeline-item timestamp="第三步">点击“生成虎鲸创作方案”，后端读取素材摘要、知识库证据和会话上下文。</el-timeline-item>
-          <el-timeline-item timestamp="第四步">到观测面板查看最近一次运行的 Trace、模型调用、成本和质量复盘。</el-timeline-item>
-        </el-timeline>
-      </SectionCard>
+    <section class="home-footer-band">
+      <div><strong>今天想创作什么？</strong><span>从一个主题或一组素材开始。</span></div>
+      <el-button type="primary" plain :icon="ArrowRight" @click="$router.push('/studio')">进入创作空间</el-button>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import { Compass, Position, Refresh, TrendCharts, UploadFilled, VideoPlay } from '@element-plus/icons-vue'
-import SectionCard from '@/components/common/SectionCard.vue'
-import StatusPill from '@/components/common/StatusPill.vue'
-import CreationPlanView from '@/components/creation/CreationPlanView.vue'
-import { createPlan, queryModelCalls, queryQualityReport, queryTrace } from '@/api/creation'
-import { ensureDemoWorkspace, loadWorkspace } from '@/services/workspaceBootstrap'
-import { useWorkspaceStore } from '@/stores/workspace'
-import { DEMO } from '@/utils/demo'
-import { materialTypeLabel, PLATFORM_OPTIONS, platformLabel, statusLabel } from '@/utils/display'
+import { ref } from 'vue'
+import { ArrowDown, ArrowRight, CircleCheckFilled, Collection, EditPen, MagicStick, Picture, Plus } from '@element-plus/icons-vue'
 
-const store = useWorkspaceStore()
-const initializing = ref(false)
-const creating = ref(false)
-
-const form = reactive({
-  platform: DEMO.platform,
-  goal: DEMO.goal,
-  stylePreference: DEMO.stylePreference
-})
-
-const activeProjectName = computed(() => {
-  return store.projects.find((item) => item.projectId === store.selectedProjectId)?.name || '尚未创建项目'
-})
-
-const activeConversationName = computed(() => {
-  return store.conversations.find((item) => item.conversationId === store.selectedConversationId)?.title || '尚未创建会话'
-})
-
-async function reload() {
-  try {
-    await loadWorkspace(store)
-  } catch (error) {
-    store.setLastError(error instanceof Error ? error.message : '刷新后端数据失败')
-  }
-}
-
-async function initializeDemo() {
-  initializing.value = true
-  try {
-    store.setLastError(undefined)
-    const result = await ensureDemoWorkspace(store)
-    ElMessage.success(`初始化完成：新增素材 ${result.materialUploadCount} 个`)
-  } catch (error) {
-    store.setLastError(error instanceof Error ? error.message : '初始化演示数据失败')
-    ElMessage.error('初始化演示数据失败')
-  } finally {
-    initializing.value = false
-  }
-}
-
-async function createDemoPlan() {
-  creating.value = true
-  try {
-    store.setLastError(undefined)
-    if (!store.selectedProjectId || !store.selectedConversationId || !store.materials.length) {
-      await ensureDemoWorkspace(store)
-    }
-
-    const response = await createPlan({
-      userId: DEMO.userId,
-      projectId: store.selectedProjectId,
-      conversationId: store.selectedConversationId,
-      goal: form.goal,
-      platform: form.platform,
-      stylePreference: form.stylePreference,
-      materialIds: store.selectedMaterialIds,
-      knowledgeBaseIds: store.selectedKnowledgeBaseIds
-    })
-
-    store.setCurrentRun(response.runId)
-    store.setCurrentPlan(response.result)
-    store.setTraceEvents(response.traceEvents || [])
-
-    if (response.runId) {
-      const [quality, traces, calls] = await Promise.allSettled([
-        queryQualityReport(response.runId),
-        queryTrace(response.runId),
-        queryModelCalls(response.runId)
-      ])
-      if (quality.status === 'fulfilled') store.setQualityReport(quality.value)
-      if (traces.status === 'fulfilled') store.setTraceEvents(traces.value.traceEvents || [])
-      if (calls.status === 'fulfilled') store.setModelCallRecords(calls.value.records || [])
-    }
-
-    ElMessage.success('创作方案已生成')
-  } catch (error) {
-    store.setLastError(error instanceof Error ? error.message : '生成创作方案失败')
-    ElMessage.error('生成创作方案失败')
-  } finally {
-    creating.value = false
-  }
-}
-
-onMounted(() => {
-  void reload()
-})
+const featuresRef = ref<HTMLElement>()
+function scrollToFeatures() { featuresRef.value?.scrollIntoView({ behavior: 'smooth' }) }
 </script>
 
 <style scoped>
-.compact {
-  padding: 0;
-  border: 0;
-}
-
-.material-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
+.home-page{max-width:1320px;margin:0 auto}.welcome{min-height:560px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:72px;padding:22px 34px 45px}.welcome-copy{max-width:560px}.eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--cf-green);font-size:12px;font-weight:750;letter-spacing:.06em}.welcome h1{margin:18px 0 18px;color:var(--cf-ink);font-size:58px;line-height:1.1;letter-spacing:-.05em}.welcome h1 em{color:var(--cf-green);font-style:normal}.welcome-copy>p{max-width:500px;margin:0;color:var(--cf-text-muted);font-size:16px;line-height:1.9}.welcome-actions{display:flex;align-items:center;gap:21px;margin-top:30px}.welcome-actions .el-button{padding:0 25px}.text-action{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--cf-green-deep);cursor:pointer;font-size:13px;font-weight:700}.trust-line{display:flex;align-items:center;gap:8px;margin-top:35px;color:var(--cf-text-faint);font-size:12px}.trust-line b{font-weight:400;color:#c7d1ca}.pulse{width:7px;height:7px;border-radius:50%;background:#55a883;box-shadow:0 0 0 4px #e4f2e9}.welcome-visual{position:relative;padding:18px}.visual-frame{position:relative;overflow:hidden;aspect-ratio:1.08;border-radius:18px;background:#153a34;box-shadow:0 25px 60px rgba(33,71,57,.18);transform:rotate(1deg)}.visual-frame:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(9,33,29,.85) 100%)}.visual-frame img{width:100%;height:100%;display:block;object-fit:cover}.visual-overlay{position:absolute;z-index:1;left:28px;right:28px;bottom:25px;color:#fff}.overlay-kicker{margin-bottom:8px;color:#a9dbc2;font-size:11px;letter-spacing:.12em}.visual-overlay strong{display:block;font-size:23px;line-height:1.35}.overlay-meta{display:flex;gap:8px;margin-top:16px}.overlay-meta span{padding:5px 8px;border:1px solid rgba(255,255,255,.2);border-radius:5px;background:rgba(255,255,255,.1);font-size:10px}.floating-note{position:absolute;z-index:2;display:flex;align-items:center;gap:8px;padding:11px 14px;border:1px solid rgba(220,232,224,.9);border-radius:9px;background:rgba(255,255,255,.94);box-shadow:0 12px 25px rgba(31,65,50,.12);color:var(--cf-ink);font-size:12px;font-weight:700}.floating-note .el-icon{color:var(--cf-green);font-size:16px}.note-top{top:42px;left:-8px}.note-bottom{right:-8px;bottom:54px}.spark{color:#d3944d;font-size:17px}.feature-strip{padding:45px 34px 35px;border-top:1px solid var(--cf-border)}.section-heading h2{margin:10px 0 25px;color:var(--cf-ink);font-size:24px;letter-spacing:-.03em}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--cf-border);border-radius:10px;background:#fff}.feature-item{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;padding:23px 22px;border:0;border-right:1px solid var(--cf-border);background:#fff;color:var(--cf-text);text-align:left;cursor:pointer;transition:160ms ease}.feature-item:last-child{border-right:0}.feature-item:hover{background:#fbfdfb}.feature-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:9px;font-size:18px}.feature-icon.green{background:#e4f2e9;color:#3c8a68}.feature-icon.amber{background:#f8eee0;color:#b17d45}.feature-icon.blue{background:#e8eef7;color:#51729d}.feature-item strong{color:var(--cf-ink);font-size:15px}.feature-item p{margin:7px 0 0;color:var(--cf-text-muted);font-size:12px;line-height:1.65}.feature-arrow{margin-top:3px;color:var(--cf-text-faint)}.home-footer-band{display:flex;align-items:center;justify-content:space-between;margin:10px 34px 0;padding:22px 24px;border-radius:10px;background:var(--cf-green-pale)}.home-footer-band div{display:flex;align-items:center;gap:14px}.home-footer-band strong{color:var(--cf-green-deep);font-size:15px}.home-footer-band span{color:var(--cf-text-muted);font-size:13px}
+@media (max-width:1250px){.welcome{gap:35px;padding-left:14px;padding-right:14px}.welcome h1{font-size:50px}.feature-strip{padding-left:14px;padding-right:14px}.home-footer-band{margin-left:14px;margin-right:14px}}
 </style>
